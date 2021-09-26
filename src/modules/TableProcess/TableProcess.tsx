@@ -84,38 +84,34 @@ export function TableProcess({ data = defaultData }: TableProps) {
                         <tr key={item.startedAt + item.username}>
                             {keys.map((value, index) => {
                                 if (index === 0) {
+                                    let content = null;
+
                                     switch (value) {
                                         case Status.Success: {
-                                            return (
-                                                <td key={value}>
-                                                    <div className="flex justify-center">
-                                                        <Icon icon="success" />
-                                                    </div>
-                                                </td>
-                                            );
+                                            content = <Icon icon="success" />;
+                                            break;
                                         }
                                         case Status.InProgress: {
-                                            return (
-                                                <td key={value}>
-                                                    <div className="flex justify-center">
-                                                        <Icon
-                                                            icon="progress"
-                                                            animate="spin"
-                                                        />
-                                                    </div>
-                                                </td>
+                                            content = (
+                                                <Icon
+                                                    icon="progress"
+                                                    animate="spin"
+                                                />
                                             );
+                                            break;
                                         }
                                         case Status.Failed: {
-                                            return (
-                                                <td key={value}>
-                                                    <div className="flex justify-center">
-                                                        <Icon icon="fail" />
-                                                    </div>
-                                                </td>
-                                            );
+                                            content = <Icon icon="fail" />;
+                                            break;
                                         }
                                     }
+                                    return (
+                                        <td key={value}>
+                                            <div className="flex justify-center">
+                                                {content}
+                                            </div>
+                                        </td>
+                                    );
                                 }
 
                                 return (

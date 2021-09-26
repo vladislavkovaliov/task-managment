@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { Transport } from './transport';
+
+const transport = new Transport();
 
 ReactDOM.render(
     <React.StrictMode>
