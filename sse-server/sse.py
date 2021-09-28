@@ -30,7 +30,7 @@ async def process(request):
     return response
 
 
-if __name__ == "__main__":
+def start_sse():
     resource = cors.add(app.router.add_resource("/process"))
     cors.add(
         resource.add_route("GET", process), {
@@ -41,3 +41,7 @@ if __name__ == "__main__":
         })
 
     web.run_app(app, host='127.0.0.1', port=5001)
+
+
+if __name__ == "__main__":
+    start_sse()

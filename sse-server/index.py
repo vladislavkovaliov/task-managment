@@ -1,7 +1,10 @@
+from threading import Thread
+
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+
 
 app = Flask(__name__)
 
@@ -14,11 +17,12 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
-if __name__ == "__main__":
+def start():
     import routes
-
     routes.init_routes(app, api)
-
     app.run(debug=True)
 
 
+if __name__ == "__main__":
+    server = Thread(target=start())
+    server.start()
