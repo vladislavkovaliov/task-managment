@@ -5,11 +5,6 @@ export function Header() {
     return (
         <Container>
             <div className="flex h-18 space-x-4 bg-indigo-500 py-2">
-                <div className="flex">
-                    <span className="py-1 px-2 self-center text-white">
-                        Back
-                    </span>
-                </div>
                 <div className="flex flex-grow" />
                 <div>
                     <Avatar src="https://i.pravatar.cc/150" />

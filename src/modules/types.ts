@@ -11,11 +11,13 @@ export interface Job {
 export interface Process {
     processId: string;
     startedAt: string;
+    status: number;
     username: string;
     version: string;
     app: string;
     duration: string;
     apiType: string;
+    jobId: number | string;
 }
 
 export enum Status {

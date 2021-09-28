@@ -1,15 +1,16 @@
-import { Container } from "../../components";
-import { Search, TableProcess } from "../../modules";
+import { observer } from "mobx-react";
 
-export function ProcessScreen() {
+import { Container } from "../../components";
+import { TableProcess } from "../../modules";
+
+export function Process() {
     return (
         <>
-            <Container>
-                <Search />
-            </Container>
             <Container>
                 <TableProcess />
             </Container>
         </>
     );
 }
+
+export const ProcessScreen = observer(Process);
