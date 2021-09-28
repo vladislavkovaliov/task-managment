@@ -1,15 +1,16 @@
-import { Container } from "../../components";
-import { Search, TableJobs } from "../../modules";
+import { observer } from "mobx-react";
 
-export function DashboardScreen() {
+import { Container } from "../../components";
+import { TableJobs } from "../../modules";
+
+export function Dashboard() {
     return (
         <>
-            <Container>
-                <Search />
-            </Container>
             <Container>
                 <TableJobs />
             </Container>
         </>
     );
 }
+
+export const DashboardScreen = observer(Dashboard);

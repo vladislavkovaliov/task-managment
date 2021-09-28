@@ -1,53 +1,11 @@
+import React, { useEffect } from 'react';
+import { observer, useLocalStore } from 'mobx-react';
+
 import { Icon } from "../../components";
-import React from "react";
-import { Process, Status } from "../types";
-
-const defaultData = [
-    {
-        status: 0,
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        processId: "123456",
-        username: "Vlad Kovaliov",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-    {
-        status: 1,
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        processId: "123456",
-        username: "Vlad Kovaliov2",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-    {
-        status: 0,
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        processId: "123456",
-        username: "Vlad Kovaliov3",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-    {
-        status: 2,
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        processId: "123456",
-        username: "Vlad Kovaliov4",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-];
-
-export interface TableProps {
-    data?: Array<Process>;
-}
+import { Status } from "../types";
+import { useStore } from '../../hooks/useStore';
+import { TableProcessStore } from './TableProcessStore';
+import { useParams } from 'react-router-dom';
 
 export const TableHeadTitle: Record<string, string> = {
     status: "Status",
@@ -60,12 +18,22 @@ export const TableHeadTitle: Record<string, string> = {
     apiType: "Api Type",
 };
 
-export function TableProcess({ data = defaultData }: TableProps) {
-    return (
+export function TableProcessComponent() {
+    const params = useParams<{jobId: string}>();
+    const processesStore = useStore("ProcessesStore");
+    const tableProcessStore = useLocalStore(() => new TableProcessStore(processesStore, Number(params.jobId)));
+
+    useEffect(() => {
+        return () => {
+            processesStore.dispose();
+        }
+    }, [processesStore, tableProcessStore])
+
+    return tableProcessStore.isLoading ? <div>loading</div> : (
         <table className="table w-full">
             <thead>
                 <tr>
-                    {Object.keys(data[0]).map((key) => {
+                    {Object.keys(tableProcessStore.nonSortedProcesses[0] ?? {}).map((key) => {
                         return (
                             <th
                                 key={key}
@@ -78,12 +46,12 @@ export function TableProcess({ data = defaultData }: TableProps) {
                 </tr>
             </thead>
             <tbody>
-                {data.map((item) => {
-                    const keys = Object.values(item);
+                {tableProcessStore.nonSortedProcesses.map((item) => {
+                    const keys = Object.entries(item);
                     return (
-                        <tr key={item.startedAt + item.username}>
-                            {keys.map((value, index) => {
-                                if (index === 0) {
+                        <tr key={item.startedAt + item.username + item.processId}>
+                            {keys.map(([key, value], index) => {
+                                if (key === "status") {
                                     let content = null;
 
                                     switch (value) {
@@ -106,7 +74,7 @@ export function TableProcess({ data = defaultData }: TableProps) {
                                         }
                                     }
                                     return (
-                                        <td key={value}>
+                                        <td>
                                             <div className="flex justify-center">
                                                 {content}
                                             </div>
@@ -127,3 +95,6 @@ export function TableProcess({ data = defaultData }: TableProps) {
         </table>
     );
 }
+
+export const TableProcess = observer(TableProcessComponent);
+

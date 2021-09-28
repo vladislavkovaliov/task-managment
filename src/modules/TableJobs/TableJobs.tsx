@@ -1,54 +1,10 @@
 import { Icon } from "../../components";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
-import { Job, Status } from "../types";
-
-const defaultData = [
-    {
-        status: 0,
-        jobId: "1",
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        username: "Vlad Kovaliov",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-    {
-        status: 1,
-        jobId: "2",
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        username: "Vlad Kovaliov1",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-    {
-        status: 0,
-        jobId: "3",
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        username: "Vlad Kovaliov3",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-    {
-        status: 2,
-        jobId: "4",
-        startedAt: new Date(2021, 1, 1, 5, 35, 59).toString(),
-        username: "Vlad Kovaliov4",
-        version: "1.0.0",
-        app: "app_name",
-        duration: "2m",
-        apiType: "python",
-    },
-];
-
-export interface TableProps {
-    data?: Array<Job>;
-}
+import { Status } from "../types";
+import { useStore } from '../../hooks/useStore';
+import { observer, useLocalStore } from 'mobx-react';
+import { TableJobsStore } from './TableJobsStore';
 
 export const TableHeadTitle: Record<string, string> = {
     status: "Status",
@@ -61,8 +17,16 @@ export const TableHeadTitle: Record<string, string> = {
     apiType: "Api Type",
 };
 
-export function TableJobs({ data = defaultData }: TableProps) {
+export function TableJobsComponent() {
     let history = useHistory();
+    const jobsStore = useStore("JobsStore")
+    const tableJobsStore = useLocalStore(() => new TableJobsStore(jobsStore))
+
+    useEffect(() => {
+        return () => {
+            tableJobsStore.dispose();
+        }
+    }, [tableJobsStore]);
 
     const handleOpenJob = useCallback(
         (jobId: string) => () => {
@@ -75,7 +39,7 @@ export function TableJobs({ data = defaultData }: TableProps) {
         <table className="table w-full">
             <thead>
                 <tr>
-                    {Object.keys(data[0]).map((key) => {
+                    {Object.keys(tableJobsStore.nonSortedJobs[0] ?? {}).map((key) => {
                         return (
                             <th
                                 key={key}
@@ -88,7 +52,7 @@ export function TableJobs({ data = defaultData }: TableProps) {
                 </tr>
             </thead>
             <tbody>
-                {data.map((item) => {
+                {tableJobsStore.nonSortedJobs.map((item) => {
                     const keys = Object.values(item);
 
                     return (
@@ -145,3 +109,5 @@ export function TableJobs({ data = defaultData }: TableProps) {
         </table>
     );
 }
+
+export const TableJobs = observer(TableJobsComponent);
