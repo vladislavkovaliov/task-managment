@@ -49,15 +49,19 @@ class ProcessesResource(Resource):
 
 
 def update(process_app, job_id):
-    founded_process = Process.query.filter_by(
+    process = Process.query.filter_by(
         app=process_app,
         job_id=job_id
     ).first()
 
-    for x in range(founded_process.duration):
-        founded_process.duration = founded_process.duration - 1
+    for x in range(process.duration + 60):
+        process.duration = process.duration - 1
+        if process.duration == -59:
+            db.session.delete(process)
+            db.session.commit()
+
+        if process.duration == 0:
+            process.status = "done"
+
         db.session.commit()
         sleep(1)
-
-    db.session.delete(founded_process)
-    db.session.commit()
